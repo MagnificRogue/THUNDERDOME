@@ -10,8 +10,13 @@ import java.lang.Math;
  */
 public class Tile implements Renderable{
 
-    static double getDistance(Tile c, Tile tile) {
-           return Math.sqrt(Math.pow((c.getCenter().x + tile.getCenter().x),2) + Math.pow((c.getCenter().y + tile.getCenter().y),2));
+    static double getDistance(Tile a, Tile b) {
+        return Math.sqrt(
+                
+            Math.pow((a.getCenter().x - b.getCenter().x),2) + 
+            Math.pow((a.getCenter().y - b.getCenter().y),2)
+        
+        );
     }
 
     private int[][] tileSprite;

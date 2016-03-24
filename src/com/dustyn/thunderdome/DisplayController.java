@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.util.Random;
 import javax.swing.JFrame;
 
 
@@ -46,9 +47,13 @@ public class DisplayController extends Canvas implements Runnable{
         frame.pack();
         
         this.addMouseListener(new MouseListener(){
-            
+            Random r = new Random();
             private synchronized void add(MouseEvent e) {
-                Map.getInstance().getAgents().add(new Agent(e.getPoint()));   
+                synchronized(Map.getInstance().getAgents()) {
+                    Agent a = new Agent(e.getPoint());
+                    a.setColor(r.nextInt(0xFFFFFF));
+                    Map.getInstance().getAgents().add(a);   
+                }
             }
             
             @Override
@@ -138,8 +143,10 @@ public class DisplayController extends Canvas implements Runnable{
     }
     
     private  void update() {
-        for(Agent a : Map.getInstance().getAgents()) {
-            a.aStar(Map.getInstance(), Map.getInstance().getItem());
+        synchronized(Map.getInstance().getAgents()) {
+            for(Agent a : Map.getInstance().getAgents()) {
+                a.aStar(Map.getInstance(), Map.getInstance().getItem());
+            }
         }
     }
 

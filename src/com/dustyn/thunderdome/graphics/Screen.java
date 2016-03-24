@@ -43,6 +43,8 @@ public class Screen {
     }
     
     public void render() {
+
+        
         for(Tile[] row : map.getTiles()) {
             for(Tile tile : row){
                 this.render(tile);
@@ -52,10 +54,11 @@ public class Screen {
         
         render(Map.getInstance().getItem());
         
-        Map.getInstance().getAgents().stream().forEach((r) -> {
-            render(r);
-        });
-        
+        synchronized(Map.getInstance().getAgents()) {
+            Map.getInstance().getAgents().stream().forEach((r) -> {
+                render(r);
+            });
+        }
     }
 
     private void render(Renderable r) {

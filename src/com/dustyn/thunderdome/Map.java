@@ -10,7 +10,8 @@ import java.util.Random;
 public class Map {
     
     public static  final int tileWidth = 10 ;
-    private Tile[][] tiles;    
+    private Tile[][] tiles;
+    private int rowLength;
     private ArrayList<Agent> agents;
     private  Item item;
     private Random rnd;
@@ -20,7 +21,7 @@ public class Map {
         this.agents = new ArrayList<>();
         this.item = new Item(new Point(100,100));
         this.rnd = new Random();
-        
+        this.rowLength = tiles.length;
         for(int i = 0; i < tiles.length; i++) {
             for(int j = 0; j < tiles[i].length; j++) {
                 tiles[i][j] = new Tile(new Point(tileWidth*i,tileWidth*j), new Point(tileWidth*i + tileWidth, tileWidth*j+tileWidth));
@@ -61,6 +62,18 @@ public class Map {
     public Item getItem() {
         return item;
     }
+
+    void generateNewItem() {
+        int x = rnd.nextInt(800);
+        int y = rnd.nextInt(800);
+        
+
+        this.item = new Item(new Point(x,y));
+        
+        for(Agent a : agents) {
+            a.restartAStar();
+        }
+    }
     
     private static class MapHolder {
 
@@ -68,17 +81,63 @@ public class Map {
     }
     
     public Tile[] getAdjacentTiles(Tile t) {
-        Tile[] adjacentTiles = {
-            getTile(t.getCenter().x+tileWidth ,t.getCenter().y), // right one tile
-            getTile(t.getCenter().x-tileWidth,t.getCenter().y), // left one tile
-            getTile(t.getCenter().x,t.getCenter().y+tileWidth), // up one tile
-            getTile(t.getCenter().x,t.getCenter().y-tileWidth), // down one tile
-            getTile(t.getCenter().x+tileWidth+4,t.getCenter().y+tileWidth+4), // diag top right
-            getTile(t.getCenter().x-tileWidth-4,t.getCenter().y+tileWidth+4), // diag top left
-            getTile(t.getCenter().x+tileWidth+4,t.getCenter().y-tileWidth-4), // diag bottom right
-            getTile(t.getCenter().x-tileWidth-4,t.getCenter().y-tileWidth-4), // diag bottom left
-        };
-        return adjacentTiles;
+        
+        int x = 0;
+        int y = 0;
+        
+        int realX = 0;
+        int realY = 0;
+        
+        for(Tile[] row : tiles) {
+
+            for(Tile tile : row) {                
+                if(tile.equals(t)) {
+                    realX = x;
+                    realY = y;
+                }
+                y++;
+
+            }
+            y=0;
+            x++;
+
+        }
+        
+        x = realX;
+        int xMinus = (x - 1) > -1 ? x-1 : 79; 
+               
+        
+        y = realY;
+        int yMinus = (y - 1) > -1 ? y - 1 : 79; 
+                
+                
+        try {
+            Tile left = tiles[xMinus][y];
+            Tile right = tiles[(x+1)%rowLength][y];
+            Tile up = tiles[x][(y+1)%rowLength];
+            Tile down = tiles[x][yMinus];
+            Tile upRight = tiles[(x+1)%rowLength][(y+1)%rowLength];
+            Tile upLeft = tiles[xMinus][(y+1)%rowLength];
+            Tile downRight = tiles[(x+1)%rowLength][yMinus];
+            Tile downLeft = tiles[xMinus][yMinus];
+
+
+            Tile[] adjacentTiles = {
+                left,
+                right,
+                up,
+                down,
+                upLeft,
+                upRight,
+                downLeft,
+                downRight
+            };
+            return adjacentTiles;
+            
+        } catch (Exception e) {
+            Tile[] tiles = {t};
+            return tiles;
+        }
     }
     
 }
