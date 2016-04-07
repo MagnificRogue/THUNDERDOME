@@ -1,8 +1,8 @@
 package com.dustyn.thunderdome;
 
 import com.dustyn.thunderdome.graphics.Renderable;
+import com.dustyn.thunderdome.graphics.Sprite;
 import java.awt.Point;
-import java.lang.Math;
 
 /**
  *
@@ -11,6 +11,11 @@ import java.lang.Math;
 public class Tile implements Renderable{
 
     static double getDistance(Tile a, Tile b) {
+        
+        if(!a.isTraversable || ! b.isTraversable) {
+            return Double.MAX_VALUE;
+        }
+        
         return Math.sqrt(
                 
             Math.pow((a.getCenter().x - b.getCenter().x),2) + 
@@ -19,52 +24,33 @@ public class Tile implements Renderable{
         );
     }
 
-    private int[][] tileSprite;
+    private Sprite sprite;
     Point origin, bounds, center;
     private int color;
-    public double G;
-    public double H;
-    public double F;
     public Tile parent;
+    
+    public boolean isTraversable;
     
     Tile(Point origin, Point bounds) {
         this();
-        this.origin = origin;
-        this.bounds = bounds;
         this.center = new Point((origin.x + bounds.x)/2,(origin.y + bounds.y)/2);
-        this.G = this.H = 5000;
+        this.sprite = new Sprite(center, Sprite.tileSprite(Map.tileWidth));
     }
 
     public void setColor(int color) {
         this.color = color;
-        for(int i = 0; i < Map.tileWidth; i ++) {
-            for(int j =0; j < Map.tileWidth; j++) {
-                tileSprite[i][j] = color;
-            }
-        }        
+        sprite.setColor(color);
     }
 
     
     public Tile() {
-        this.tileSprite = new int[Map.tileWidth][Map.tileWidth];
+        this.sprite = new Sprite(new Point(0,0), Sprite.tileSprite(Map.tileWidth));
+        this.isTraversable = true;
     }
     
     
 
-    @Override
-    public int[][] getSprite() {
-        return tileSprite;
-    }
 
-    @Override
-    public Point getOrigin() {
-        return origin;
-    }
-
-    @Override
-    public Point getBounds() {
-        return bounds;
-    }
     
     public Point getCenter() {
         return center;
@@ -78,6 +64,11 @@ public class Tile implements Renderable{
     public boolean contains(int x, int y) {
         return (origin.x <= x && x <= bounds.x) &&
                (origin.y <= y && y <= bounds.y);
+    }
+
+    @Override
+    public Sprite getSprite() {
+        return sprite;
     }
 
     

@@ -19,15 +19,21 @@ public class Map {
     private Map() {
         this.tiles = new Tile[800/tileWidth][800/tileWidth];
         this.agents = new ArrayList<>();
-        this.item = new Item(new Point(100,100));
         this.rnd = new Random();
         this.rowLength = tiles.length;
         for(int i = 0; i < tiles.length; i++) {
             for(int j = 0; j < tiles[i].length; j++) {
                 tiles[i][j] = new Tile(new Point(tileWidth*i,tileWidth*j), new Point(tileWidth*i + tileWidth, tileWidth*j+tileWidth));
                 tiles[i][j].setColor(0xFFFFFF);
+                
+                if(rnd.nextInt(10) == 1) {
+                    tiles[i][j].isTraversable = false;
+                    tiles[i][j].setColor(0x000000);
+                }
+                
             }
         }
+        generateNewItem();
         
     }
     
@@ -67,6 +73,10 @@ public class Map {
         int x = rnd.nextInt(800);
         int y = rnd.nextInt(800);
         
+        while(!getTile(x,y).isTraversable) {
+             x = rnd.nextInt(800);
+             y = rnd.nextInt(800);
+        }
 
         this.item = new Item(new Point(x,y));
         

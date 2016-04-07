@@ -6,6 +6,7 @@
 package com.dustyn.thunderdome;
 
 import com.dustyn.thunderdome.graphics.Renderable;
+import com.dustyn.thunderdome.graphics.Sprite;
 import java.awt.Point;
 
 /**
@@ -14,44 +15,17 @@ import java.awt.Point;
  */
 class Item implements Renderable{
 
-    int[][] sprite;
-    private Point origin;
-    private Point bounds;
+    Sprite sprite;
     private Point center;
     
     public Item() {
-        this.sprite = new int[4][4];
-        
-        for(int i=0; i < 4; i++){
-            for(int j=0; j < 4; j++) {
-                sprite[i][j] = 0xFF00FF;
-            }
-        }
-             
-        
-        this.origin = new Point(0,0);
-        this.bounds = new Point(4,4);
+        this.sprite = Sprite.getItemSprite();
     }
     
     public Item(Point p) {
         this();
-        this.setCenter(p);
-    }
-    
-    
-    @Override
-    public int[][] getSprite() {
-        return sprite;
-    }
-
-    @Override
-    public Point getOrigin() {
-        return origin;
-    }
-
-    @Override
-    public Point getBounds() {
-        return bounds;
+        this.center = p;
+        sprite.setCenter(p);
     }
     
     /**
@@ -66,11 +40,11 @@ class Item implements Renderable{
      */
     public void setCenter(Point center) {
         this.center = center;
-        origin.x = (int) (center.x - 2);
-        origin.y = (int) (center.y - 2);
-        
-        bounds.x = center.x + 2;
-        bounds.y = center.y + 2;
-        
+        sprite.setCenter(center);
+    }
+
+    @Override
+    public Sprite getSprite() {
+        return sprite;
     }
 }

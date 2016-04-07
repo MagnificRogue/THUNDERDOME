@@ -2,6 +2,7 @@ package com.dustyn.thunderdome.graphics;
 
 import com.dustyn.thunderdome.Map;
 import com.dustyn.thunderdome.Tile;
+import java.awt.Point;
 import java.util.Random;
 
 /**
@@ -44,14 +45,13 @@ public class Screen {
     
     public void render() {
 
-        
+        this.clear();
         for(Tile[] row : map.getTiles()) {
             for(Tile tile : row){
                 this.render(tile);
             }
         }
        
-        
         render(Map.getInstance().getItem());
         
         synchronized(Map.getInstance().getAgents()) {
@@ -62,13 +62,16 @@ public class Screen {
     }
 
     private void render(Renderable r) {
-        for(int i = r.getOrigin().x; i < r.getBounds().x; i++) {
-            for(int j = r.getOrigin().y; j < r.getBounds().y; j++){
+
+        Sprite s = r.getSprite();
+        
+        for(int i = s.getOrigin().x; i < s.getBound().x; i++) {
+            for(int j = s.getOrigin().y; j < s.getBound().y; j++){
                 int pixelIndex = i + j * width;
                 
-                if(pixelIndex > pixels.length || 0 > pixelIndex) break;
+                if(pixelIndex > pixels.length || 0 > pixelIndex) continue;
                 
-                pixels[pixelIndex] = r.getSprite()[i - r.getOrigin().x][j-r.getOrigin().y];
+                pixels[pixelIndex] = s.getPixels()[i - s.getOrigin().x][j-s.getOrigin().y];
             }
         }
     }
